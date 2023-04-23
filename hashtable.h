@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdint.h>
+#include <immintrin.h>
 
 #define HASHT_ELEM_T char*
 #define HASHT_ELEM_EQ(a,b) (strcmp(a,b) == 0)
@@ -7,7 +8,7 @@
 const size_t HASH_ARR_SIZE = 613;
 
 struct HashTableBucket{
-    HASHT_ELEM_T *data;
+    __m256i *data;
     uint32_t size;      // I think that 10^9 elements per line is surely out of memory and is not hashtabl-y either
     uint32_t capacity;  // but having structure take 128 bits is nice
 };

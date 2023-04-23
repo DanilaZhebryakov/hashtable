@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/danila/Desktop/proga_asm/hashtable/build",
+  "command": "/usr/bin/g++ -g -O3 -mavx2 -o CMakeFiles/hashtable.dir/hashtable.cpp.o -c /home/danila/Desktop/proga_asm/hashtable/hashtable.cpp",
+  "file": "/home/danila/Desktop/proga_asm/hashtable/hashtable.cpp"
+},
+{
+  "directory": "/home/danila/Desktop/proga_asm/hashtable/build",
+  "command": "/usr/bin/g++ -g -O3 -mavx2 -o CMakeFiles/hashtable.dir/main_perfomance.cpp.o -c /home/danila/Desktop/proga_asm/hashtable/main_perfomance.cpp",
+  "file": "/home/danila/Desktop/proga_asm/hashtable/main_perfomance.cpp"
+},
+{
+  "directory": "/home/danila/Desktop/proga_asm/hashtable/build",
+  "command": "/usr/bin/g++ -g -O3 -mavx2 -o CMakeFiles/hashtable.dir/lib/file_read.cpp.o -c /home/danila/Desktop/proga_asm/hashtable/lib/file_read.cpp",
+  "file": "/home/danila/Desktop/proga_asm/hashtable/lib/file_read.cpp"
+},
+{
+  "directory": "/home/danila/Desktop/proga_asm/hashtable/build",
+  "command": "/usr/bin/g++ -g -O3 -mavx2 -o CMakeFiles/hashtable.dir/lib/String.cpp.o -c /home/danila/Desktop/proga_asm/hashtable/lib/String.cpp",
+  "file": "/home/danila/Desktop/proga_asm/hashtable/lib/String.cpp"
+}
+]

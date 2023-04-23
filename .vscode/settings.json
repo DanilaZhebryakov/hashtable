@@ -1,0 +1,18 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/danila/Desktop/proga_asm/hashtable/run",
+            "binaryPath": "/home/danila/Desktop/proga_asm/hashtable/run/perftest.elf",
+            "binaryArgs": []
+        }
+    ],
+    "makefile.makeDirectory": "${fileDirname}/",
+    "makefile.makefilePath": "${fileDirname}/Makefile",
+    "makefile.configurations": [
+        {
+         "name": "Default",
+         "makeArgs": []
+        }
+    ],
+    "makefile.defaultLaunchConfiguration": null
+}

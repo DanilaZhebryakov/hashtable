@@ -1,5 +1,5 @@
 CC := g++
-CFLAGS := -std=c++17 -O3 -mavx2 -Wall -Wextra -Wno-missing-field-initializers -I ./
+CFLAGS := -std=c++17 -g -O3 -mavx2 -Wall -Wextra -Wno-missing-field-initializers -I ./
 LFLAGS :=
 OBJDIR := obj
 
