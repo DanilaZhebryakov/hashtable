@@ -7,7 +7,7 @@
 #include "lib/String.h"
 #include "lib/file_read.h"
 #include "hashtable.h"
-
+#include <immintrin.h>
 
 uint32_t hashFuncFirst(char* str){
     return *((unsigned char*)str);
@@ -47,6 +47,15 @@ uint32_t hashFuncGnu(char* str){
     }
     return res;
 }
+uint32_t hashFuncCrc(char* str){
+    uint32_t res = 5381;
+    while (*str)
+    {
+        res = _mm_crc32_u8(res, *str);
+        str++;
+    }
+    return res;
+}
 
 int main(){
     FILE* input_file = fopen("input.txt", "r");
@@ -74,9 +83,9 @@ int main(){
     }
     printf("Loading done: %d lines %d chars\n", input_word_cnt, input_data.length);
     
-    uint32_t (*(hash_functions[]))(char*) = {hashFuncFirst, hashFuncLen, hashFuncSum, hashFuncXrol, hashFuncXror, hashFuncGnu};
-    char* hashf_names[]                   = {"first chr", "length", "sum", "rol + xor", "ror + xor", "GNU hash"};
-    const int hash_func_cnt = 6;
+    uint32_t (*(hash_functions[]))(char*) = {hashFuncFirst, hashFuncLen, hashFuncSum, hashFuncXrol, hashFuncXror, hashFuncGnu, hashFuncCrc};
+    char* hashf_names[]                   = {"first chr", "length", "sum", "rol + xor", "ror + xor", "GNU hash", "crc32"};
+    const int hash_func_cnt = 7;
     HashTable hashtable = {};
     hashTableCtor(&hashtable, nullptr);
 

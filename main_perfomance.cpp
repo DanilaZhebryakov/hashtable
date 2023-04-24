@@ -30,10 +30,11 @@ uint32_t hashFuncXrol(char* str){
     }
     return res;
 }
-uint32_t hashFuncGnu(char* str){
+uint32_t hashFuncCrc(char* str){
     uint32_t res = 5381;
-    while(*str){
-        res = (res * 33) + *((unsigned char*)str);
+    while (*str)
+    {
+        res = _mm_crc32_u8(res, *str);
         str++;
     }
     return res;
@@ -66,7 +67,7 @@ int main(){
     printf("Loading done: %ld lines %ld chars\n", input_word_cnt, input_data.length);
 
     HashTable hashtable = {};
-    hashTableCtor(&hashtable, hashFuncGnu);
+    hashTableCtor(&hashtable, hashFuncCrc);
 
     for(int i = 0; i < input_word_cnt; i++){
         //if(input_words[i].length > 0)
