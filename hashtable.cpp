@@ -43,20 +43,26 @@ int HTBucketResize(HashTableBucket* bucket, int new_cap){
 
 inline int HTBucketFind(HashTableBucket* bucket, HASHT_ELEM_T elem){
     __m256i elem_avx = _mm256_loadu_si256((__m256i*)(elem)); 
-    __m256i curr_chr_mask = _mm256_set_epi64x(0,0,0,0xFF);
-    __m256i all_chr_mask = _mm256_setzero_si256();
+    __m256i half_mask = _mm256_set_epi64x(-1L ,-1L ,0 ,0);
 
-    while (!_mm256_testz_si256(curr_chr_mask, elem_avx)) { // if len >= 32 chrmask goes beyond the end of register, causing the llop to finish
-        all_chr_mask  = _mm256_or_si256(all_chr_mask, curr_chr_mask);
-        curr_chr_mask = _mm256_slli_si256(curr_chr_mask, 1);
-    }
+    __m256i nochr_mask = _mm256_setzero_si256();
+    nochr_mask = _mm256_cmpeq_epi8(nochr_mask, elem_avx);
+    nochr_mask = _mm256_or_si256(_mm256_slli_si256(nochr_mask, 1), nochr_mask);
+    nochr_mask = _mm256_or_si256(_mm256_slli_si256(nochr_mask, 2), nochr_mask);
 
-    if (!_mm256_testz_si256(curr_chr_mask, curr_chr_mask)) {
-        elem_avx = _mm256_and_si256(elem_avx, all_chr_mask); // set all past-the-end bytes to 0
+    if (!_mm256_testz_ps((__m256)nochr_mask, (__m256)nochr_mask)) {
+
+        nochr_mask = _mm256_or_si256(_mm256_slli_si256(nochr_mask, 4), nochr_mask);
+        nochr_mask = _mm256_or_si256(_mm256_slli_si256(nochr_mask, 8), nochr_mask);
+        if (!_mm256_testc_ps((__m256)half_mask, (__m256)nochr_mask)){
+            nochr_mask = _mm256_or_si256(nochr_mask, half_mask);
+        }
+        elem_avx = _mm256_andnot_si256(nochr_mask, elem_avx); // set all past-the-end bytes to 0
+
         for (int i = 0; i < bucket->size; i++){
             __m256i cmp_str = _mm256_load_si256(bucket->data + i);
             __m256i cmp_res = _mm256_xor_si256 (cmp_str, elem_avx);
-            //printf("%d %d %X %s|%s_\n", i , elsize,  cmp_res, bucket->data + i, elem);
+            //printf("%d %X %s|%s_\n", i,  cmp_res, bucket->data + i, elem);
             
             /*
             for(int j = 0; j < 32; j++){
@@ -75,7 +81,7 @@ inline int HTBucketFind(HashTableBucket* bucket, HASHT_ELEM_T elem){
         for (int i = 0; i < bucket->size; i++){
 
             if (((char*)(bucket->data + i))[sizeof(*bucket->data)-1] && strcmp(*(char**)(bucket->data + i), elem)){
-                printf("!!%d %s\n", i, *(char*)(bucket->data + i));
+                //printf("!!%d %s\n", i, *(char*)(bucket->data + i));
                 return i;
             }
         }
