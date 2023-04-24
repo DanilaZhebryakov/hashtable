@@ -62,3 +62,5 @@ We see that L1 cache misses went 30% down, (reading string from the bucket for c
 It is hard to do anything with GNUhash due to the nature of operations this function performs: it operates not with multiple values at once, but with one value again and again. Maybe something can be done to group together these operations, but it is hard. The solution is to replace hash function with the one implemented as instuction of CPU we use. I use crc32 (implemented as part of SSE4.2). 
 
 The first obvious step is to use 8-bit crc32 for charecters of string directly. It even does increase performance a bit, but does not solve the problem with data reads and branches. This can be optimized further. Using 16-bit crc32 on strings is easy to implement as we already have 1 byte ('\0') we can use as padding.
+
+As we see, it is a questionable optimization: 1% more instructions, 9% less data reads, fraction of percent less branches and cache misses. 

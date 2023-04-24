@@ -22,20 +22,17 @@ void testHTSearch(HashTable* hashtable, String* test_data, int test_data_size){
     }
 }
 
-uint32_t hashFuncXrol(char* str){
-    uint32_t res = 0;
-    while(*str){
-        res = ((res << 1) | (res >> (sizeof(res)*8 - 1))) ^ *((unsigned char*)str);
-        str++;
-    }
-    return res;
-}
 uint32_t hashFuncCrc(char* str){
     uint32_t res = 5381;
-    while (*str)
-    {
-        res = _mm_crc32_u8(res, *str);
-        str++;
+    uint16_t chr = *(uint16_t*)str;
+    uint16_t oldchr = 1;
+    //beware the big endian
+    while ((chr & 0xFF) && oldchr)
+    { // stop if \0 was used last loop as second chr OR if it is current first chr
+        str += 2;
+        oldchr = chr > 0xFF;
+        res = _mm_crc32_u16(res, chr);
+        chr = *(uint16_t*)str;
     }
     return res;
 }
