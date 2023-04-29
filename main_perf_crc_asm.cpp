@@ -7,34 +7,64 @@
 #include "lib/String.h"
 #include "lib/file_read.h"
 #include "hashtable.h"
+#include "config.h"
+
+#ifdef DEBUG_MODE
+    const int test_iterations_count = 5000000;
+    extern bool is_test_runnung;
+#else
+    #ifdef PROFILING_MODE
+        const int test_iterations_count = 5000000;
+    #else
+        const int test_iterations_count = 100000000;
+    #endif
+#endif
+extern "C" uint32_t hashFuncCrc(char* );
 
 void testHTSearch(HashTable* hashtable, String* test_data, int test_data_size){
+    #ifdef DEBUG_MODE
+        is_test_running = true;
+    #endif
     volatile int r = 0;
-    for(int i = 0; i < 5000000; i++){
+    long long tsc_sum = 0;
+    for(int i = 0; i < test_iterations_count; i++){
         int rand_i = rand() % test_data_size;
         if (test_data[rand_i].length != 0){
+            #ifndef PROFILING_MODE
+            long long tsc_before;
+            asm volatile ( "rdtsc\n"
+                  "movl %%edx, %%ebx\n"
+                  "shlq $32, %%rbx\n"
+                  "orq %%rax, %%rbx\n"
+                : "=b" (tsc_before)
+                : 
+                : "rax", "rdx"
+                );
+            #endif
             //printf("# %d %s\n", rand_i, test_data[rand_i].chars);
             r = hashTableFind(hashtable, test_data[rand_i].chars);
+            #ifndef PROFILING_MODE
+            long long tsc_after;
+            asm volatile ( "rdtsc\n"
+                "shlq $32, %%rdx\n"
+                "orq %%rax, %%rdx\n"
+                //"int $3\n"
+                : "=d" (tsc_after)
+                :
+                : "rax"
+                );
+            tsc_sum += tsc_after - tsc_before;
+            #endif
+            
         }
         else{
             i--;
         }
     }
-}
-
-uint32_t hashFuncCrc(char* str){
-    uint32_t res = 5381;
-    uint16_t chr = *(uint16_t*)str;
-    uint16_t oldchr = 1;
-    //beware the big endian
-    while ((chr & 0xFF) && oldchr)
-    { // stop if \0 was used last loop as second chr OR if it is current first chr
-        str += 2;
-        oldchr = chr > 0xFF;
-        res = _mm_crc32_u16(res, chr);
-        chr = *(uint16_t*)str;
-    }
-    return res;
+    printf("Cycles:%lld\n", tsc_sum);
+    #ifdef DEBUG_MODE
+        is_test_running = false;
+    #endif
 }
 
 int main(){
@@ -50,7 +80,7 @@ int main(){
     }
     fclose(input_file);
 
-    for(int i = 0; i < input_data.length; i++){
+    for(size_t i = 0; i < input_data.length; i++){
         if(!isgraph(input_data.chars[i])){ // replace all separators with spaces
             input_data.chars[i] = ' ';
         }
@@ -66,7 +96,7 @@ int main(){
     HashTable hashtable = {};
     hashTableCtor(&hashtable, hashFuncCrc);
 
-    for(int i = 0; i < input_word_cnt; i++){
+    for(size_t i = 0; i < input_word_cnt; i++){
         //if(input_words[i].length > 0)
         //    printf("%s\n", input_words[i].chars);
         hashTableAdd(&hashtable, input_words[i].chars);

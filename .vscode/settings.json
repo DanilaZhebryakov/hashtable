@@ -14,5 +14,8 @@
          "makeArgs": []
         }
     ],
-    "makefile.defaultLaunchConfiguration": null
+    "makefile.defaultLaunchConfiguration": null,
+    "files.associations": {
+        "file_read.h": "c"
+    }
 }
