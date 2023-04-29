@@ -86,7 +86,6 @@ $(PERFTEST_V5_RUN_FILE): libs
 $(PERFTEST_V7_RUN_FILE): libs $(PERFTEST_V7_OBJ)
 	$(CC) $(LIB_OBJ) $(PERFTEST_V7_OBJ) -o $@ $(LFLAGS)
 
-$(PERFTEST_V5_RUN_FILE): libs
 
 
 libs: $(LIB_OBJ)

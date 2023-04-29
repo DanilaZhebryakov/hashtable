@@ -5,7 +5,7 @@
 #define HASHT_ELEM_T char*
 #define HASHT_ELEM_EQ(a,b) (strcmp(a,b) == 0)
 
-const size_t HASH_ARR_SIZE = 613;
+const size_t HASH_ARR_SIZE = 8681;
 
 struct HashTableBucket{
     __m256i *data;

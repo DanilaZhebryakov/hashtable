@@ -24,7 +24,9 @@ void testHTSearch(HashTable* hashtable, String* test_data, int test_data_size){
     #ifdef DEBUG_MODE
         is_test_running = true;
     #endif
+
     volatile int r = 0;
+
     long long tsc_sum = 0;
     for(int i = 0; i < test_iterations_count; i++){
         int rand_i = rand() % test_data_size;
